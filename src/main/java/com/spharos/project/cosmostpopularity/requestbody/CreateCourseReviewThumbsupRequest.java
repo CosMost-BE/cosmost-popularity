@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CreateCourseReviewThumbsupRequest {
 
-
+    private Long authId;
+    private Long courseId;
 
 }
