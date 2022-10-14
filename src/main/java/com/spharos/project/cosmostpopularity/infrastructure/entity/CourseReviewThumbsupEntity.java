@@ -1,5 +1,6 @@
 package com.spharos.project.cosmostpopularity.infrastructure.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Getter
 @Table(name = "course_review_thumbsup")
-public class CourseReviewThumbsupEntity {
+public class CourseReviewThumbsupEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,5 +22,11 @@ public class CourseReviewThumbsupEntity {
 
     @NotNull
     private Long courseId;
+
+    @Builder
+    public CourseReviewThumbsupEntity(Long authId, Long courseId) {
+        this.authId = authId;
+        this.courseId = courseId;
+    }
 
 }
