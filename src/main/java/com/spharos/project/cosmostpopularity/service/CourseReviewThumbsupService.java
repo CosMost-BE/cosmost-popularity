@@ -7,6 +7,8 @@ import com.spharos.project.cosmostpopularity.requestbody.CreateCourseReviewThumb
 public interface CourseReviewThumbsupService {
 
     void createCourseReviewThumbsup(CreateCourseReviewThumbsupRequest request);
+    void deleteCourseReviewThumbsup(Long id);
+
 
     default CourseReviewThumbsupEntity dtoToEntity(CreateCourseReviewThumbsupRequest request) {
 
