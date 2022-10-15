@@ -9,9 +9,6 @@ public interface CourseReviewThumbsupService {
     void createCourseReviewThumbsup(CreatePopularitiesRequest request);
     void deleteCourseReviewThumbsup(Long id);
 
-
-
-
     default CourseReviewThumbsupEntity reviewThumbsupdtoToEntity(CreatePopularitiesRequest request) {
 
         CourseReviewThumbsupEntity courseReviewThumbsupEntity = CourseReviewThumbsupEntity.builder()
@@ -20,7 +17,4 @@ public interface CourseReviewThumbsupService {
                 .build();
         return courseReviewThumbsupEntity;
     }
-
-
-
 }
