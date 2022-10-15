@@ -2,6 +2,7 @@ package com.spharos.project.cosmostpopularity.controller;
 
 import com.spharos.project.cosmostpopularity.requestbody.CreatePopularitiesRequest;
 import com.spharos.project.cosmostpopularity.service.CourseReviewThumbsupService;
+import com.spharos.project.cosmostpopularity.service.CourseThumbsupService;
 import com.spharos.project.cosmostpopularity.service.FollowService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +23,15 @@ public class PopularityController {
 
     private final CourseReviewThumbsupService courseReviewThumbsupService;
     private final FollowService followService;
+    private final CourseThumbsupService courseThumbsupService;
 
     @Autowired
     public PopularityController(CourseReviewThumbsupService courseReviewThumbsupService,
-                                          FollowService followService) {
+                                FollowService followService,
+                                CourseThumbsupService courseThumbsupService) {
         this.courseReviewThumbsupService = courseReviewThumbsupService;
         this.followService = followService;
+        this.courseThumbsupService = courseThumbsupService;
     }
 
     // 코스리뷰 좋아요 등록
@@ -37,12 +41,14 @@ public class PopularityController {
 
         if(request.getType().equals("courseReviewThumbsup")) {
             courseReviewThumbsupService.createCourseReviewThumbsup(request);
-            return ResponseEntity.ok("코스리뷰 좋아요 성공!!");
+            return ResponseEntity.ok("코스리뷰 좋아요 성공!!!");
         } else if(request.getType().equals("follow")) {
             followService.createFollow(request);
-            return ResponseEntity.ok("팔로워 등록 성공!!");
+            return ResponseEntity.ok("팔로워 등록 성공!!!");
+        } else if(request.getType().equals("course")) {
+            courseThumbsupService.createCourseThumbsup(request);
+            return ResponseEntity.ok("코스 좋아요 성공 !!!");
         }
-
         return null;
     }
 
