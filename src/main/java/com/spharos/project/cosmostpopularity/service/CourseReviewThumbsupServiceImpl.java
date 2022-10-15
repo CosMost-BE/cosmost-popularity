@@ -32,15 +32,12 @@ public class CourseReviewThumbsupServiceImpl implements CourseReviewThumbsupServ
     @Override
     public void deleteCourseReviewThumbsup(Long id) {
 
-        try {
-            Optional<CourseReviewThumbsupEntity> thumbsupId =
-                Optional.of(courseReviewThumbsupRepository.findById(id).orElseThrow(
-                CourseReviewThumbsupNotFoundException::new));
-            if (thumbsupId.isPresent()) {
-                courseReviewThumbsupRepository.deleteById(id);
-            }
-        } catch (CourseReviewThumbsupNotFoundException e) {
-            e.printStackTrace();
+        Optional<CourseReviewThumbsupEntity> thumbsupId =
+            Optional.of(courseReviewThumbsupRepository.findById(id)
+                .orElseThrow(CourseReviewThumbsupNotFoundException::new));
+
+        if (thumbsupId.isPresent()) {
+            courseReviewThumbsupRepository.deleteById(id);
         }
 
     }
