@@ -9,9 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CreateCourseReviewThumbsupRequest {
+public class CreatePopularitiesRequest {
 
     private Long authId;
     private Long courseId;
+    private String type;
+    private Long followingId;
 
 }
