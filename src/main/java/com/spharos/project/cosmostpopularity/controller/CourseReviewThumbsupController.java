@@ -1,7 +1,8 @@
 package com.spharos.project.cosmostpopularity.controller;
 
-import com.spharos.project.cosmostpopularity.requestbody.CreateCourseReviewThumbsupRequest;
+import com.spharos.project.cosmostpopularity.requestbody.CreatePopularitiesRequest;
 import com.spharos.project.cosmostpopularity.service.CourseReviewThumbsupService;
+import com.spharos.project.cosmostpopularity.service.FollowService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,17 +21,29 @@ import org.springframework.web.bind.annotation.RestController;
 public class CourseReviewThumbsupController {
 
     private final CourseReviewThumbsupService courseReviewThumbsupService;
+    private final FollowService followService;
 
     @Autowired
-    public CourseReviewThumbsupController(CourseReviewThumbsupService courseReviewThumbsupService) {
+    public CourseReviewThumbsupController(CourseReviewThumbsupService courseReviewThumbsupService,
+                                          FollowService followService) {
         this.courseReviewThumbsupService = courseReviewThumbsupService;
+        this.followService = followService;
     }
 
-    //코스리뷰 좋아요 등록
+    // 코스리뷰 좋아요 등록
+    // 팔로우 등록
     @PostMapping("")
-    public ResponseEntity<String> createCourseReviewThumbsup(@RequestBody CreateCourseReviewThumbsupRequest request){
-        courseReviewThumbsupService.createCourseReviewThumbsup(request);
-        return ResponseEntity.ok("코스리뷰 좋아요 성공!!");
+    public ResponseEntity<String> createPopularities(@RequestBody CreatePopularitiesRequest request){
+
+        if(request.getType().equals("courseReviewThumbsup")) {
+            courseReviewThumbsupService.createCourseReviewThumbsup(request);
+            return ResponseEntity.ok("코스리뷰 좋아요 성공!!");
+        } else if(request.getType().equals("follow")) {
+            followService.createFollow(request);
+            return ResponseEntity.ok("팔로워 등록 성공!!");
+        }
+
+        return null;
     }
 
     @DeleteMapping("/{id}/review")
