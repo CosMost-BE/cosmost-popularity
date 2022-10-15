@@ -2,22 +2,25 @@ package com.spharos.project.cosmostpopularity.service;
 
 
 import com.spharos.project.cosmostpopularity.infrastructure.entity.CourseReviewThumbsupEntity;
-import com.spharos.project.cosmostpopularity.requestbody.CreateCourseReviewThumbsupRequest;
+import com.spharos.project.cosmostpopularity.requestbody.CreatePopularitiesRequest;
 
 public interface CourseReviewThumbsupService {
 
-    void createCourseReviewThumbsup(CreateCourseReviewThumbsupRequest request);
+    void createCourseReviewThumbsup(CreatePopularitiesRequest request);
     void deleteCourseReviewThumbsup(Long id);
 
 
-    default CourseReviewThumbsupEntity dtoToEntity(CreateCourseReviewThumbsupRequest request) {
+
+
+    default CourseReviewThumbsupEntity reviewThumbsupdtoToEntity(CreatePopularitiesRequest request) {
 
         CourseReviewThumbsupEntity courseReviewThumbsupEntity = CourseReviewThumbsupEntity.builder()
                 .courseId(request.getCourseId())
                 .authId(request.getAuthId())
                 .build();
-
         return courseReviewThumbsupEntity;
     }
+
+
 
 }
