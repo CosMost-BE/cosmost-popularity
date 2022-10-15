@@ -3,7 +3,7 @@ package com.spharos.project.cosmostpopularity.service;
 import com.spharos.project.cosmostpopularity.exception.CourseReviewThumbsupNotFoundException;
 import com.spharos.project.cosmostpopularity.infrastructure.entity.CourseReviewThumbsupEntity;
 import com.spharos.project.cosmostpopularity.infrastructure.repository.CourseReviewThumbsupEntityRepository;
-import com.spharos.project.cosmostpopularity.requestbody.CreateCourseReviewThumbsupRequest;
+import com.spharos.project.cosmostpopularity.requestbody.CreatePopularitiesRequest;
 import java.util.Optional;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +24,8 @@ public class CourseReviewThumbsupServiceImpl implements CourseReviewThumbsupServ
     }
 
     @Override
-    public void createCourseReviewThumbsup(CreateCourseReviewThumbsupRequest request) {
-        CourseReviewThumbsupEntity courseReviewThumbsupEntity = dtoToEntity(request);
+    public void createCourseReviewThumbsup(CreatePopularitiesRequest request) {
+        CourseReviewThumbsupEntity courseReviewThumbsupEntity = reviewThumbsupdtoToEntity(request);
         courseReviewThumbsupRepository.save(courseReviewThumbsupEntity);
     }
 
@@ -39,6 +39,8 @@ public class CourseReviewThumbsupServiceImpl implements CourseReviewThumbsupServ
         if (thumbsupId.isPresent()) {
             courseReviewThumbsupRepository.deleteById(id);
         }
-
     }
+
+
+
 }
