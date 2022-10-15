@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/v1/popularities")
 @Slf4j
-public class CourseReviewThumbsupController {
+public class PopularityController {
 
     private final CourseReviewThumbsupService courseReviewThumbsupService;
     private final FollowService followService;
 
     @Autowired
-    public CourseReviewThumbsupController(CourseReviewThumbsupService courseReviewThumbsupService,
+    public PopularityController(CourseReviewThumbsupService courseReviewThumbsupService,
                                           FollowService followService) {
         this.courseReviewThumbsupService = courseReviewThumbsupService;
         this.followService = followService;
