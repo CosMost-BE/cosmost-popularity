@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,7 +28,7 @@ public class CourseReviewThumbsupController {
 
     //코스리뷰 좋아요 등록
     @PostMapping("")
-    public ResponseEntity<String> createCourseReviewThumbsup(CreateCourseReviewThumbsupRequest request){
+    public ResponseEntity<String> createCourseReviewThumbsup(@RequestBody CreateCourseReviewThumbsupRequest request){
         log.info(String.valueOf(request.getAuthId()));
         log.info(String.valueOf(request.getCourseId()));
         courseReviewThumbsupService.createCourseReviewThumbsup(request);
