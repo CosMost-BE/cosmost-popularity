@@ -32,4 +32,9 @@ public class PopularityControllerAdvice {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
     }
 
+    @ExceptionHandler(AuthIdNotFoundException.class)
+    public ResponseEntity<String> CourseIdNotFoundException(AuthIdNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+    }
+
 }
