@@ -1,10 +1,13 @@
 package com.spharos.project.cosmostpopularity.service;
 
+import com.spharos.project.cosmostpopularity.exception.FollowIdNotFoundException;
 import com.spharos.project.cosmostpopularity.infrastructure.entity.FollowEntity;
 import com.spharos.project.cosmostpopularity.infrastructure.repository.FollowEntityRepository;
 import com.spharos.project.cosmostpopularity.requestbody.CreatePopularitiesRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class FollowServiceImpl implements FollowService {
@@ -20,5 +23,16 @@ public class FollowServiceImpl implements FollowService {
     public void createFollow(CreatePopularitiesRequest request) {
         FollowEntity followEntity = followdtoToEntity(request);
         followEntityRepository.save(followEntity);
+    }
+
+    @Override
+    public void deleteFollow(Long id) {
+
+        Optional<FollowEntity> followEntityId = Optional.ofNullable(followEntityRepository.findById(id)
+                .orElseThrow(FollowIdNotFoundException::new));
+
+        if(followEntityId.isPresent()) {
+            followEntityRepository.deleteById(id);
+        }
     }
 }
