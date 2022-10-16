@@ -11,7 +11,7 @@ public interface FollowService {
     void createFollow(CreatePopularitiesRequest request);
     void deleteFollow(Long id);
     List<Follow> readMyFollowers();
-
+    List<Follow> readMyFollowings();
 
 
     default FollowEntity followdtoToEntity(CreatePopularitiesRequest request) {
