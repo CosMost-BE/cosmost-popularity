@@ -2,6 +2,7 @@ package com.spharos.project.cosmostpopularity.service;
 
 import com.spharos.project.cosmostpopularity.exception.AuthIdNotFoundException;
 import com.spharos.project.cosmostpopularity.exception.FollowIdNotFoundException;
+import com.spharos.project.cosmostpopularity.exception.FollowingIdNotFoundException;
 import com.spharos.project.cosmostpopularity.infrastructure.entity.FollowEntity;
 import com.spharos.project.cosmostpopularity.infrastructure.repository.FollowEntityRepository;
 import com.spharos.project.cosmostpopularity.model.Follow;
@@ -56,5 +57,20 @@ public class FollowServiceImpl implements FollowService {
                     new Follow(followEntity)).collect(Collectors.toList());
         }
         throw new AuthIdNotFoundException();
+    }
+
+    @Override
+    public List<Follow> readMyFollowings() {
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
+        Long id = Long.parseLong(request.getHeader("Authorization"));
+
+        List<FollowEntity> followEntityList = followEntityRepository.findAllByFollowingId(id);
+
+        if(!followEntityList.isEmpty()) {
+            return followEntityList.stream().map(followEntity ->
+                    new Follow(followEntity)).collect(Collectors.toList());
+        }
+        throw new FollowingIdNotFoundException();
     }
 }
