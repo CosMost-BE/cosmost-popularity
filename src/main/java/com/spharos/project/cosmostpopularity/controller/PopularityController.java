@@ -64,4 +64,10 @@ public class PopularityController {
         courseThumbsupService.deleteCourseThumbsup(id);
         return ResponseEntity.ok("코스 좋아요가 취소 되었습니다.");
     }
+
+    @DeleteMapping("/{id}/following")
+    public ResponseEntity<String> deletefollow(@PathVariable Long id){
+        followService.deleteFollow(id);
+        return ResponseEntity.ok("팔로우가 취소 되었습니다.");
+    }
 }
