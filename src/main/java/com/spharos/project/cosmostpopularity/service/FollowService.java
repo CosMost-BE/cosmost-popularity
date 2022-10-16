@@ -6,6 +6,7 @@ import com.spharos.project.cosmostpopularity.requestbody.CreatePopularitiesReque
 public interface FollowService {
 
     void createFollow(CreatePopularitiesRequest request);
+    void deleteFollow(Long id);
 
     default FollowEntity followdtoToEntity(CreatePopularitiesRequest request) {
         FollowEntity followEntity = FollowEntity.builder()
