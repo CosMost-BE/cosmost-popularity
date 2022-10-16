@@ -43,7 +43,7 @@ public class FollowServiceImpl implements FollowService {
     }
 
     @Override
-    public List<Follow> readMyFollwers() {
+    public List<Follow> readMyFollowers() {
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
         Long id = Long.parseLong(request.getHeader("Authorization"));

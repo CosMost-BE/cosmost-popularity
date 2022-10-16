@@ -10,7 +10,7 @@ public interface FollowService {
 
     void createFollow(CreatePopularitiesRequest request);
     void deleteFollow(Long id);
-    List<Follow> readMyFollwers();
+    List<Follow> readMyFollowers();
 
 
 

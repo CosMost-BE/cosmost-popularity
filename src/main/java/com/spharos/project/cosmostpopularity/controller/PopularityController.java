@@ -1,5 +1,6 @@
 package com.spharos.project.cosmostpopularity.controller;
 
+import com.spharos.project.cosmostpopularity.model.Follow;
 import com.spharos.project.cosmostpopularity.requestbody.CreatePopularitiesRequest;
 import com.spharos.project.cosmostpopularity.service.CourseReviewThumbsupService;
 import com.spharos.project.cosmostpopularity.service.CourseThumbsupService;
@@ -7,13 +8,9 @@ import com.spharos.project.cosmostpopularity.service.FollowService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -48,6 +45,17 @@ public class PopularityController {
         } else if(request.getType().equals("course")) {
             courseThumbsupService.createCourseThumbsup(request);
             return ResponseEntity.ok("코스 좋아요 성공 !!!");
+        }
+        return null;
+    }
+
+    // 파이페이지에서 팔로워 조회
+    @GetMapping("")
+    public ResponseEntity<List<Follow>> readMyFollowers(@RequestParam(value = "filter") String filter,
+                                                        @RequestParam(value = "type") String type){
+
+        if(filter.equals("auth") && type.equals("follower")){
+            return ResponseEntity.status(200).body(followService.readMyFollowers());
         }
         return null;
     }
