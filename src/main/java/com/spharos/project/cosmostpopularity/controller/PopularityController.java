@@ -49,13 +49,15 @@ public class PopularityController {
         return null;
     }
 
-    // 파이페이지에서 팔로워 조회
+    // 마이페이지에서 팔로워 조회
     @GetMapping("")
     public ResponseEntity<List<Follow>> readMyFollowers(@RequestParam(value = "filter") String filter,
                                                         @RequestParam(value = "type") String type){
 
         if(filter.equals("auth") && type.equals("follower")){
             return ResponseEntity.status(200).body(followService.readMyFollowers());
+        } else if(filter.equals("auth") && type.equals("following")){
+            return ResponseEntity.status(200).body(followService.readMyFollowings());
         }
         return null;
     }
