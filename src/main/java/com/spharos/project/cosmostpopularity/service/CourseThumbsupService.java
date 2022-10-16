@@ -8,6 +8,7 @@ import com.spharos.project.cosmostpopularity.requestbody.CreatePopularitiesReque
 public interface CourseThumbsupService {
 
     void createCourseThumbsup(CreatePopularitiesRequest request);
+    void deleteCourseThumbsup(Long id);
 
     default CourseThumbsupEntity courseThumbsupdtoToEntity(CreatePopularitiesRequest request) {
 

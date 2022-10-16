@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class CourseReviewThumbsupControllerAdvice {
+public class PopularityControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public String processValidationError(MethodArgumentNotValidException exception) {
@@ -27,5 +27,9 @@ public class CourseReviewThumbsupControllerAdvice {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
     }
 
+    @ExceptionHandler(CourseIdNotFoundException.class)
+    public ResponseEntity<String> CourseIdNotFoundException(CourseIdNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+    }
 
 }
