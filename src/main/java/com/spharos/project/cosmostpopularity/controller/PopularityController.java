@@ -54,8 +54,14 @@ public class PopularityController {
 
     @DeleteMapping("/{id}/review")
     public ResponseEntity<String> deleteCourseReviewThumbsup(@PathVariable Long id){
-            courseReviewThumbsupService.deleteCourseReviewThumbsup(id);
+        courseReviewThumbsupService.deleteCourseReviewThumbsup(id);
         return ResponseEntity.ok("코스리뷰 좋아요가 취소 되었습니다.");
     }
 
+
+    @DeleteMapping("/{id}/cosmost")
+    public ResponseEntity<String> deleteCourseThumbsup(@PathVariable Long id) {
+        courseThumbsupService.deleteCourseThumbsup(id);
+        return ResponseEntity.ok("코스 좋아요가 취소 되었습니다.");
+    }
 }
