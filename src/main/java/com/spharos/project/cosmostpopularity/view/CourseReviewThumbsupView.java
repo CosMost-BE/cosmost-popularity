@@ -12,6 +12,6 @@ import lombok.ToString;
 public class CourseReviewThumbsupView {
 
     private Long authId;
-    private Long courseId;
+    private Long courseReviewId;
 
 }
