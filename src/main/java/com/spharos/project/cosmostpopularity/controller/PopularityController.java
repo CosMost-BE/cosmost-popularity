@@ -62,11 +62,16 @@ public class PopularityController {
         return null;
     }
 
+    // 내가 누른 해당 코스 좋아요
+    // 코스의 좋아요 개수 조회
     @GetMapping("/{id}")
-    public ResponseEntity<?> readMyFollowers(@RequestParam(value = "type") String type,
-                                             @PathVariable(value = "id") Long id) {
+    public ResponseEntity<?> readCourseThumbsup(@RequestParam(value = "type", required = false) String type,
+                                                @RequestParam(value = "filter", required = false) String filter,
+                                                @PathVariable(value = "id") Long id) {
 
-       if (type.equals("cosmost")) {
+        if (String.valueOf(filter).equals("count") && type.equals("cosmost")) {
+            return ResponseEntity.ok().body(courseThumbsupService.readCourseThumbsupCount(id));
+        } else  if (type.equals("cosmost"))   {
             return ResponseEntity.ok().body(courseThumbsupService.readThumbsupByMe(id));
         }
         return null;
