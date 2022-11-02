@@ -4,10 +4,13 @@ import com.spharos.project.cosmostpopularity.exception.CourseIdNotFoundException
 import com.spharos.project.cosmostpopularity.infrastructure.entity.CourseThumbsupEntity;
 import com.spharos.project.cosmostpopularity.infrastructure.repository.CourseThumbsupRepository;
 import com.spharos.project.cosmostpopularity.requestbody.CreatePopularitiesRequest;
+import com.spharos.project.cosmostpopularity.view.CourseThumbsupView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,8 +35,24 @@ public class CourseThumbsupServiceImpl implements CourseThumbsupService {
         Optional<CourseThumbsupEntity> courseThumbsupId = Optional.ofNullable(courseThumbsupRepository.findById(id)
                 .orElseThrow(CourseIdNotFoundException::new));
 
-        if(courseThumbsupId.isPresent()){
+        if (courseThumbsupId.isPresent()) {
             courseThumbsupRepository.deleteById(id);
         }
+    }
+
+    @Override
+    public List<CourseThumbsupView> readThumbsupByMe(Long id) {
+
+        List<CourseThumbsupEntity> courseThumbsupEntityList = courseThumbsupRepository.findByAuthId(id);
+        List<CourseThumbsupView> courseThumbsupViews = new ArrayList<>();
+
+        for (CourseThumbsupEntity reportCategoryEntity : courseThumbsupEntityList) {
+            courseThumbsupViews.add(CourseThumbsupView.builder()
+                    .authId(reportCategoryEntity.getAuthId())
+                    .courseId(reportCategoryEntity.getCourseId())
+                    .build());
+        }
+
+        return courseThumbsupViews;
     }
 }
