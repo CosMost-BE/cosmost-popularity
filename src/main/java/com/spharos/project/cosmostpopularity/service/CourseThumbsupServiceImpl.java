@@ -4,6 +4,7 @@ import com.spharos.project.cosmostpopularity.exception.CourseIdNotFoundException
 import com.spharos.project.cosmostpopularity.infrastructure.entity.CourseThumbsupEntity;
 import com.spharos.project.cosmostpopularity.infrastructure.repository.CourseThumbsupRepository;
 import com.spharos.project.cosmostpopularity.requestbody.CreatePopularitiesRequest;
+import com.spharos.project.cosmostpopularity.view.CourseThumbsupCountView;
 import com.spharos.project.cosmostpopularity.view.CourseThumbsupView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,7 @@ public class CourseThumbsupServiceImpl implements CourseThumbsupService {
         }
     }
 
+    // 내가 누른 해당 코스 좋아요
     @Override
     public List<CourseThumbsupView> readThumbsupByMe(Long id) {
 
@@ -54,5 +56,15 @@ public class CourseThumbsupServiceImpl implements CourseThumbsupService {
         }
 
         return courseThumbsupViews;
+    }
+    
+    // 코스의 좋아요 개수 조회
+    @Override
+    public CourseThumbsupCountView readCourseThumbsupCount(Long id) {
+        Long courseThumbsupCnt = courseThumbsupRepository.countByCourseId(id);
+
+        return CourseThumbsupCountView.builder()
+                .courseThumbsCnt(courseThumbsupCnt)
+                .build();
     }
 }
