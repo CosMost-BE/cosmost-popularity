@@ -21,12 +21,12 @@ public class CourseReviewThumbsupEntity extends BaseTimeEntity {
     private Long authId;
 
     @NotNull
-    private Long courseId;
+    private Long courseReviewId;
 
     @Builder
-    public CourseReviewThumbsupEntity(Long authId, Long courseId) {
+    public CourseReviewThumbsupEntity(Long authId, Long courseReviewId) {
         this.authId = authId;
-        this.courseId = courseId;
+        this.courseReviewId = courseReviewId;
     }
 
 }
