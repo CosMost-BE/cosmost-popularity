@@ -8,17 +8,9 @@ import java.util.List;
 
 public interface FollowService {
 
-    void createFollow(CreatePopularitiesRequest request);
+    Follow createFollow(CreatePopularitiesRequest request);
     void deleteFollow(Long id);
     List<Follow> readMyFollowers();
     List<Follow> readMyFollowings();
 
-
-    default FollowEntity followdtoToEntity(CreatePopularitiesRequest request) {
-        FollowEntity followEntity = FollowEntity.builder()
-            .authId(request.getAuthId())
-            .followingId(request.getFollowingId())
-            .build();
-        return followEntity;
-    }
 }
