@@ -52,7 +52,9 @@ public class PopularityController {
     // 내가 누른 코스 좋아요 전체조회
     @GetMapping("")
     public ResponseEntity<?> readMyFollowers(@RequestParam(value = "filter", required = false) String filter,
-                                             @RequestParam(value = "type") String type) {
+                                             @RequestParam(value = "type") String type,
+                                             @RequestParam(value = "courseId", required = false) Long courseId
+    ) {
 
         if (String.valueOf(filter).equals("auth") && String.valueOf(type).equals("follower")) {
             return ResponseEntity.ok().body(followService.readMyFollowers());
@@ -60,8 +62,10 @@ public class PopularityController {
             return ResponseEntity.ok().body(followService.readMyFollowings());
         } else if (String.valueOf(type).equals("cosmost")) {
             return ResponseEntity.ok().body(courseThumbsupService.readAllThumbsupByMe());
+        } else if (filter.equals("cosmosts") && type.equals("follower") && !(courseId.equals(null))){
+            return ResponseEntity.ok().body(followService.readOtherUserFollowers());
         }
-        return null;
+            return null;
     }
 
 
@@ -73,9 +77,14 @@ public class PopularityController {
         // 코스의 좋아요 개수 조회
         if (String.valueOf(filter).equals("count") && type.equals("cosmost")) {
             return ResponseEntity.ok().body(courseThumbsupService.readCourseThumbsupCount(id));
-        // 내가 누른 해당 코스 좋아요
+            // 내가 누른 해당 코스 좋아요
         } else if (type.equals("cosmost")) {
-            return ResponseEntity.ok().body(courseThumbsupService.readThumbsupByMe(id));
+            return ResponseEntity.ok().body(courseThumbsupService.readCourseThumbsupByMe(id));
+            // 내가 누른 해당 코스리뷰 좋아요
+        } else if (type.equals("review")) {
+            return ResponseEntity.ok().body(courseReviewThumbsupService.readCourseReviewThumbsupByMe(id));
+        } else if(String.valueOf(filter).equals("count") && type.equals("review")){
+            return ResponseEntity.ok().body(courseReviewThumbsupService.readCourseReviewThumbsupCount(id));
         }
         return null;
     }
