@@ -57,9 +57,9 @@ public class FollowServiceImpl implements FollowService {
                 .build();
     }
 
-    // 언팔로우
+    // 언팔로우(팔로잉 취소)
     @Override
-    public void deleteFollow(Long id) {
+    public void deleteFollow(Long followingId) {
 
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
@@ -68,7 +68,7 @@ public class FollowServiceImpl implements FollowService {
 
         try {
             Optional<List<FollowEntity>> followEntityId = Optional.ofNullable(
-                    Optional.ofNullable(followEntityRepository.findByAuthIdAndFollowingId(authId, id)).orElseThrow(FollowIdNotFoundException::new));
+                    Optional.ofNullable(followEntityRepository.findByAuthIdAndFollowingId(authId, followingId)).orElseThrow(FollowIdNotFoundException::new));
 
             if (followEntityId.isPresent()) {
                 followEntityRepository.deleteById(followEntityId.get().get(0).getId());
@@ -80,7 +80,7 @@ public class FollowServiceImpl implements FollowService {
 
     }
 
-    // 나의 팔로워 조회하기
+    // 나의 팔로워 조회하기 followingId(주인)
     @Override
     public List<Follow> readMyFollowers() {
         HttpServletRequest request = ((ServletRequestAttributes)
@@ -97,7 +97,7 @@ public class FollowServiceImpl implements FollowService {
         throw new AuthIdNotFoundException();
     }
 
-    // 나의 팔로잉 조회하기
+    // 나의 팔로잉 조회하기 (authId가 주인)
     @Override
     public List<Follow> readMyFollowings() {
 
@@ -113,5 +113,22 @@ public class FollowServiceImpl implements FollowService {
                     new Follow(followEntity)).collect(Collectors.toList());
         }
         throw new FollowingIdNotFoundException();
+    }
+
+    @Override
+    public List<Follow> readOtherUserFollowers() {
+
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
+        Long following = Long.valueOf(request.getHeader("Authorization"));
+
+        List<FollowEntity> followingId = followEntityRepository.findAllByFollowingId(following);
+
+        if (!followingId.isEmpty()) {
+            return followingId.stream().map(followEntity ->
+                    new Follow(followEntity)).collect(Collectors.toList());
+        }
+        throw new AuthIdNotFoundException();
+
     }
 }
