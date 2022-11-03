@@ -1,6 +1,5 @@
 package com.spharos.project.cosmostpopularity.controller;
 
-import com.spharos.project.cosmostpopularity.model.Follow;
 import com.spharos.project.cosmostpopularity.requestbody.CreatePopularitiesRequest;
 import com.spharos.project.cosmostpopularity.service.CourseReviewThumbsupService;
 import com.spharos.project.cosmostpopularity.service.CourseThumbsupService;
@@ -34,36 +33,55 @@ public class PopularityController {
     // 코스리뷰 좋아요 등록
     // 팔로우 등록
     @PostMapping("")
-    public ResponseEntity<String> createPopularities(@RequestBody CreatePopularitiesRequest request){
+    public ResponseEntity<String> createPopularities(@RequestBody CreatePopularitiesRequest request) {
 
-        if(request.getType().equals("courseReviewThumbsup")) {
+        if (request.getType().equals("courseReviewThumbsup")) {
             courseReviewThumbsupService.createCourseReviewThumbsup(request);
             return ResponseEntity.ok("코스리뷰 좋아요 성공!!!");
-        } else if(request.getType().equals("follow")) {
+        } else if (request.getType().equals("follow")) {
             followService.createFollow(request);
-            return ResponseEntity.ok("팔로워 등록 성공!!!");
-        } else if(request.getType().equals("course")) {
+            return ResponseEntity.ok("팔로잉 등록 성공!!!");
+        } else if (request.getType().equals("course")) {
             courseThumbsupService.createCourseThumbsup(request);
             return ResponseEntity.ok("코스 좋아요 성공 !!!");
         }
         return null;
     }
 
-    // 마이페이지에서 팔로워 조회
+    // 마이페이지에서 나의 팔로워 조회
+    // 내가 누른 코스 좋아요 전체조회
     @GetMapping("")
-    public ResponseEntity<List<Follow>> readMyFollowers(@RequestParam(value = "filter") String filter,
-                                                        @RequestParam(value = "type") String type){
+    public ResponseEntity<?> readMyFollowers(@RequestParam(value = "filter", required = false) String filter,
+                                             @RequestParam(value = "type") String type) {
 
-        if(filter.equals("auth") && type.equals("follower")){
-            return ResponseEntity.status(200).body(followService.readMyFollowers());
-        } else if(filter.equals("auth") && type.equals("following")){
-            return ResponseEntity.status(200).body(followService.readMyFollowings());
+        if (String.valueOf(filter).equals("auth") && String.valueOf(type).equals("follower")) {
+            return ResponseEntity.ok().body(followService.readMyFollowers());
+        } else if (String.valueOf(filter).equals("auth") && String.valueOf(type).equals("following")) {
+            return ResponseEntity.ok().body(followService.readMyFollowings());
+        } else if (String.valueOf(type).equals("cosmost")) {
+            return ResponseEntity.ok().body(courseThumbsupService.readAllThumbsupByMe());
+        }
+        return null;
+    }
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> readCourseThumbsup(@RequestParam(value = "type", required = false) String type,
+                                                @RequestParam(value = "filter", required = false) String filter,
+                                                @PathVariable(value = "id") Long id) {
+
+        // 코스의 좋아요 개수 조회
+        if (String.valueOf(filter).equals("count") && type.equals("cosmost")) {
+            return ResponseEntity.ok().body(courseThumbsupService.readCourseThumbsupCount(id));
+        // 내가 누른 해당 코스 좋아요
+        } else if (type.equals("cosmost")) {
+            return ResponseEntity.ok().body(courseThumbsupService.readThumbsupByMe(id));
         }
         return null;
     }
 
     @DeleteMapping("/{id}/review")
-    public ResponseEntity<String> deleteCourseReviewThumbsup(@PathVariable Long id){
+    public ResponseEntity<String> deleteCourseReviewThumbsup(@PathVariable Long id) {
         courseReviewThumbsupService.deleteCourseReviewThumbsup(id);
         return ResponseEntity.ok("코스리뷰 좋아요가 취소 되었습니다.");
     }
@@ -76,8 +94,8 @@ public class PopularityController {
     }
 
     @DeleteMapping("/{id}/following")
-    public ResponseEntity<String> deletefollow(@PathVariable Long id){
+    public ResponseEntity<String> deletefollow(@PathVariable Long id) {
         followService.deleteFollow(id);
-        return ResponseEntity.ok("팔로우가 취소 되었습니다.");
+        return ResponseEntity.ok("팔로잉이 취소 되었습니다.");
     }
 }

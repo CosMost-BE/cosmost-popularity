@@ -24,7 +24,8 @@ public class CourseThumbsupEntity extends BaseTimeEntity{
     private Long courseId;
 
     @Builder
-    public CourseThumbsupEntity(Long authId, Long courseId) {
+    public CourseThumbsupEntity(Long id, Long authId, Long courseId) {
+        this.id = id;
         this.authId = authId;
         this.courseId = courseId;
     }
