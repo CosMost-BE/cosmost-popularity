@@ -79,7 +79,7 @@ public class CourseThumbsupServiceImpl implements CourseThumbsupService {
 
     // 내가 누른 해당 코스 좋아요(코스 한 개)
     @Override
-    public List<CourseThumbsupView> readThumbsupByMe(Long id) {
+    public List<CourseThumbsupView> readCourseThumbsupByMe(Long id) {
 
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();

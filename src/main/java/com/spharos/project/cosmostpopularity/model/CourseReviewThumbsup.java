@@ -9,7 +9,9 @@ import lombok.ToString;
 @Builder
 public class CourseReviewThumbsup {
 
+    private Long id;
     private Long authId;
     private Long courseReviewId;
+    private Long courseReviewThumbsupCount;
 
 }

@@ -11,4 +11,6 @@ import java.util.List;
 public interface CourseReviewThumbsupEntityRepository extends JpaRepository<CourseReviewThumbsupEntity, Long> {
 
     List<CourseReviewThumbsupEntity> findByAuthIdAndCourseReviewId(Long authId, Long courseReviewId);
+    Long countByCourseReviewId(Long id);
+
 }

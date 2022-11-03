@@ -13,4 +13,5 @@ public interface FollowService {
     List<Follow> readMyFollowers();
     List<Follow> readMyFollowings();
 
+    List<Follow> readOtherUserFollowers();
 }
