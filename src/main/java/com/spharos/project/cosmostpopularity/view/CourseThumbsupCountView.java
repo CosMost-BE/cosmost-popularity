@@ -9,9 +9,8 @@ import lombok.ToString;
 @ToString
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CourseReviewThumbsupView {
+public class CourseThumbsupCountView {
 
-    private Long authId;
-    private Long courseReviewId;
+    private Long courseThumbsCnt;
 
 }

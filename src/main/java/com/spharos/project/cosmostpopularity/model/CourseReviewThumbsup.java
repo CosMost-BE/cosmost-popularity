@@ -10,6 +10,6 @@ import lombok.ToString;
 public class CourseReviewThumbsup {
 
     private Long authId;
-    private Long courseId;
+    private Long courseReviewId;
 
 }

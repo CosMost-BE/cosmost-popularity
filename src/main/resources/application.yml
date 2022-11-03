@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 9004
 
 spring:
   datasource:
@@ -15,8 +15,12 @@ spring:
         dialect: org.hibernate.dialect.MySQL5Dialect
         format_sql: 'true'
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: 'true'
   profiles:
     include: localdb
+
+jwt:
+  tokenValidTime: 1800000
+  secret: COS-MOST-TEAM-SECRET-KEY
 

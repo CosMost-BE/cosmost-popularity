@@ -7,7 +7,10 @@ import com.spharos.project.cosmostpopularity.infrastructure.entity.FollowEntity;
 import com.spharos.project.cosmostpopularity.infrastructure.repository.FollowEntityRepository;
 import com.spharos.project.cosmostpopularity.model.Follow;
 import com.spharos.project.cosmostpopularity.requestbody.CreatePopularitiesRequest;
+import io.jsonwebtoken.Jwts;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -18,7 +21,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class FollowServiceImpl implements FollowService {
+
+    @Value("${jwt.secret}")
+    private String secretKey;
 
     private final FollowEntityRepository followEntityRepository;
 
@@ -27,47 +34,81 @@ public class FollowServiceImpl implements FollowService {
         this.followEntityRepository = followEntityRepository;
     }
 
+    // 팔로워 등록하기
     @Override
-    public void createFollow(CreatePopularitiesRequest request) {
-        FollowEntity followEntity = followdtoToEntity(request);
+    public Follow createFollow(CreatePopularitiesRequest createPopularitiesRequest) {
+
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
+        String token = request.getHeader("Authorization");
+        Long authId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
+
+        FollowEntity followEntity = FollowEntity.builder()
+                .authId(authId)
+                .followingId(createPopularitiesRequest.getFollowingId())
+                .build();
+
         followEntityRepository.save(followEntity);
+
+        return Follow.builder()
+                .id(followEntity.getId())
+                .authId(followEntity.getAuthId())
+                .followingId(followEntity.getFollowingId())
+                .build();
     }
 
+    // 언팔로우
     @Override
     public void deleteFollow(Long id) {
 
-        Optional<FollowEntity> followEntityId = Optional.ofNullable(followEntityRepository.findById(id)
-                .orElseThrow(FollowIdNotFoundException::new));
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
+        String token = request.getHeader("Authorization");
+        Long authId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
 
-        if(followEntityId.isPresent()) {
-            followEntityRepository.deleteById(id);
+        try {
+            Optional<List<FollowEntity>> followEntityId = Optional.ofNullable(
+                    Optional.ofNullable(followEntityRepository.findByAuthIdAndFollowingId(authId, id)).orElseThrow(FollowIdNotFoundException::new));
+
+            if (followEntityId.isPresent()) {
+                followEntityRepository.deleteById(followEntityId.get().get(0).getId());
+            }
+
+        } catch (Exception e) {
+            throw new FollowingIdNotFoundException();
         }
+
     }
 
+    // 나의 팔로워 조회하기
     @Override
     public List<Follow> readMyFollowers() {
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
-        Long id = Long.parseLong(request.getHeader("Authorization"));
+        String token = request.getHeader("Authorization");
+        Long followingId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
 
-        List<FollowEntity> followEntityList = followEntityRepository.findAllByAuthId(id);
+        List<FollowEntity> followEntityList = followEntityRepository.findAllByFollowingId(followingId);
 
-        if(!followEntityList.isEmpty()) {
+        if (!followEntityList.isEmpty()) {
             return followEntityList.stream().map(followEntity ->
                     new Follow(followEntity)).collect(Collectors.toList());
         }
         throw new AuthIdNotFoundException();
     }
 
+    // 나의 팔로잉 조회하기
     @Override
     public List<Follow> readMyFollowings() {
+
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
-        Long id = Long.parseLong(request.getHeader("Authorization"));
+        String token = request.getHeader("Authorization");
+        Long authId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
 
-        List<FollowEntity> followEntityList = followEntityRepository.findAllByFollowingId(id);
+        List<FollowEntity> followEntityList = followEntityRepository.findAllByAuthId(authId);
 
-        if(!followEntityList.isEmpty()) {
+        if (!followEntityList.isEmpty()) {
             return followEntityList.stream().map(followEntity ->
                     new Follow(followEntity)).collect(Collectors.toList());
         }
