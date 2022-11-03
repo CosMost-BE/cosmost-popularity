@@ -1,10 +1,12 @@
 package com.spharos.project.cosmostpopularity.service;
 
 import com.spharos.project.cosmostpopularity.exception.CourseReviewThumbsupNotFoundException;
+import com.spharos.project.cosmostpopularity.exception.DuplicateCourseThumbsup;
 import com.spharos.project.cosmostpopularity.infrastructure.entity.CourseReviewThumbsupEntity;
 import com.spharos.project.cosmostpopularity.infrastructure.repository.CourseReviewThumbsupEntityRepository;
 import com.spharos.project.cosmostpopularity.model.CourseReviewThumbsup;
 import com.spharos.project.cosmostpopularity.requestbody.CreatePopularitiesRequest;
+import com.spharos.project.cosmostpopularity.view.CourseReviewThumbsupView;
 import io.jsonwebtoken.Jwts;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -51,6 +54,8 @@ public class CourseReviewThumbsupServiceImpl implements CourseReviewThumbsupServ
         courseReviewThumbsupRepository.save(courseReviewThumbsupEntity);
 
         return CourseReviewThumbsup.builder()
+                .id(courseReviewThumbsupEntity.getId())
+                .authId(id)
                 .courseReviewId(courseReviewThumbsupEntity.getCourseReviewId())
                 .build();
     }
@@ -76,5 +81,33 @@ public class CourseReviewThumbsupServiceImpl implements CourseReviewThumbsupServ
             throw new CourseReviewThumbsupNotFoundException();
         }
 
+    }
+
+    @Override
+    public List<CourseReviewThumbsupView> readCourseReviewThumbsupByMe(Long courseReviewId) {
+
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
+        String token = request.getHeader("Authorization");
+        Long authId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
+
+        Optional<List<CourseReviewThumbsupEntity>> courseThumbsupEntityList =
+                Optional.of(Optional.ofNullable(courseReviewThumbsupRepository.findByAuthIdAndCourseReviewId(authId, courseReviewId))
+                        .orElseThrow(DuplicateCourseThumbsup::new));
+
+
+        return  courseThumbsupEntityList.get().stream().map(courseReviewThumbsup ->
+                new CourseReviewThumbsupView(courseReviewThumbsup)).collect(Collectors.toList());
+    }
+
+    // 코스리뷰 좋아요 개수 조회
+    @Override
+    public CourseReviewThumbsup readCourseReviewThumbsupCount(Long id) {
+
+        Long courseReviewThumbsupCnt = courseReviewThumbsupRepository.countByCourseReviewId(id);
+
+        return CourseReviewThumbsup.builder()
+                .courseReviewThumbsupCount(courseReviewThumbsupCnt)
+                .build();
     }
 }
