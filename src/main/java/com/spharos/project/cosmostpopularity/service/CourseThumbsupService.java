@@ -13,7 +13,7 @@ public interface CourseThumbsupService {
 
     CourseThumbsupEntity createCourseThumbsup(CreatePopularitiesRequest request);
     void deleteCourseThumbsup(Long id);
-    List<CourseThumbsupView> readThumbsupByMe(Long id);
+    List<CourseThumbsupView> readCourseThumbsupByMe(Long id);
     CourseThumbsupCountView readCourseThumbsupCount(Long id);
     List<CourseThumbsupView> readAllThumbsupByMe();
 
