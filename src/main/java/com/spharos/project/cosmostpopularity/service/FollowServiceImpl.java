@@ -80,13 +80,15 @@ public class FollowServiceImpl implements FollowService {
 
     }
 
+    // 나의 팔로워 조회하기
     @Override
     public List<Follow> readMyFollowers() {
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
-        Long id = Long.parseLong(request.getHeader("Authorization"));
+        String token = request.getHeader("Authorization");
+        Long followingId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
 
-        List<FollowEntity> followEntityList = followEntityRepository.findAllByAuthId(id);
+        List<FollowEntity> followEntityList = followEntityRepository.findAllByFollowingId(followingId);
 
         if (!followEntityList.isEmpty()) {
             return followEntityList.stream().map(followEntity ->
@@ -95,13 +97,16 @@ public class FollowServiceImpl implements FollowService {
         throw new AuthIdNotFoundException();
     }
 
+    // 나의 팔로잉 조회하기
     @Override
     public List<Follow> readMyFollowings() {
+
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
-        Long id = Long.parseLong(request.getHeader("Authorization"));
+        String token = request.getHeader("Authorization");
+        Long authId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
 
-        List<FollowEntity> followEntityList = followEntityRepository.findAllByFollowingId(id);
+        List<FollowEntity> followEntityList = followEntityRepository.findAllByAuthId(authId);
 
         if (!followEntityList.isEmpty()) {
             return followEntityList.stream().map(followEntity ->
