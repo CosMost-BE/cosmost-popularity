@@ -20,12 +20,12 @@ public interface CourseThumbsupRepository extends JpaRepository<CourseThumbsupEn
     Slice<CourseThumbsupEntity> findAllByAuthId(Long id, Pageable pageable);
     List<CourseThumbsupEntity> findAllByAuthId(Long id);
 
-    @Query(value = "select c from CourseThumbsupEntity c " +
+    @Query(value = "select c.courseId from CourseThumbsupEntity c " +
             "group by c.courseId order by count(c.courseId) desc")
-    Slice<CourseThumbsupEntity> CourseThumbsupSort(Pageable pageable);
+    Slice<Long> CourseThumbsupSortId(Pageable pageable);
 
     @Query(value = "select count(c.courseId) from CourseThumbsupEntity c " +
             "group by c.courseId order by count(c.courseId) desc")
-    List<Float> CourseThumbsupCount(Pageable pageable);
+    Slice<Long> CourseThumbsupCount(Pageable pageable);
     
 }
