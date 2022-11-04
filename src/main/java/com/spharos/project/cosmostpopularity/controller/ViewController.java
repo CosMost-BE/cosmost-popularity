@@ -25,14 +25,9 @@ public class ViewController {
         this.viewCourseThumbsupService = viewCourseThumbsupService;
     }
 
-    @GetMapping("/view/ranking")
-    public ResponseEntity<List<ReadCourseThumbsupSortAllResponse>> ReadCourseThumbsupSortAll(@RequestParam(value = "order", defaultValue = " ", required = false) String order,
-                                                                                                   Pageable pageable) {
-        if(order.equals("popularity")) {
-            return ResponseEntity.ok().body(viewCourseThumbsupService.readCourseThumbsupSortAll(pageable));
-        }
-
-        throw new CourseParamNotFoundException();
+    @GetMapping("/view/ranking/popularity")
+    public ResponseEntity<List<ReadCourseThumbsupSortAllResponse>> ReadCourseThumbsupSortAll(Pageable pageable) {
+        return ResponseEntity.ok().body(viewCourseThumbsupService.readCourseThumbsupSortAll(pageable));
     }
 
 
