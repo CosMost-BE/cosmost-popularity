@@ -6,6 +6,7 @@ import com.spharos.project.cosmostpopularity.service.CourseThumbsupService;
 import com.spharos.project.cosmostpopularity.service.FollowService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,19 +52,20 @@ public class PopularityController {
     // 마이페이지에서 나의 팔로워 조회
     // 내가 누른 코스 좋아요 전체조회
     @GetMapping("")
-    public ResponseEntity<?> readMyFollowers(@RequestParam(value = "filter", required = false) String filter,
-                                             @RequestParam(value = "type") String type,
-                                             @RequestParam(value = "courseId", required = false) Long courseId
+    public ResponseEntity<?> readMyFollowers(@RequestParam(value = "filter", defaultValue = " ", required = false) String filter,
+                                             @RequestParam(value = "type", defaultValue = " ", required = false) String type,
+                                             @RequestParam(value = "course-id", defaultValue = " ", required = false) Long courseId,
+                                             Pageable pageable
     ) {
 
         if (String.valueOf(filter).equals("auth") && String.valueOf(type).equals("follower")) {
-            return ResponseEntity.ok().body(followService.readMyFollowers());
+            return ResponseEntity.ok().body(followService.readMyFollowers(pageable));
         } else if (String.valueOf(filter).equals("auth") && String.valueOf(type).equals("following")) {
-            return ResponseEntity.ok().body(followService.readMyFollowings());
+            return ResponseEntity.ok().body(followService.readMyFollowings(pageable));
         } else if (String.valueOf(type).equals("cosmost")) {
-            return ResponseEntity.ok().body(courseThumbsupService.readAllThumbsupByMe());
-        } else if (filter.equals("cosmosts") && type.equals("follower") && !(courseId.equals(null))){
-            return ResponseEntity.ok().body(followService.readOtherUserFollowers());
+            return ResponseEntity.ok().body(courseThumbsupService.readAllThumbsupByMe(pageable));
+        } else if (filter.equals("cosmosts") && type.equals("follower") && !(courseId.equals(" "))){
+            return ResponseEntity.ok().body(followService.readOtherUserFollowers(pageable));
         }
             return null;
     }
