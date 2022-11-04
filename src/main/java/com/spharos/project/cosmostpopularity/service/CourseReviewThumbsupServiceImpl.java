@@ -6,6 +6,7 @@ import com.spharos.project.cosmostpopularity.infrastructure.entity.CourseReviewT
 import com.spharos.project.cosmostpopularity.infrastructure.repository.CourseReviewThumbsupEntityRepository;
 import com.spharos.project.cosmostpopularity.model.CourseReviewThumbsup;
 import com.spharos.project.cosmostpopularity.requestbody.CreatePopularitiesRequest;
+import com.spharos.project.cosmostpopularity.view.CourseReviewThumbsupCountView;
 import com.spharos.project.cosmostpopularity.view.CourseReviewThumbsupView;
 import io.jsonwebtoken.Jwts;
 import lombok.ToString;
@@ -102,11 +103,11 @@ public class CourseReviewThumbsupServiceImpl implements CourseReviewThumbsupServ
 
     // 코스리뷰 좋아요 개수 조회
     @Override
-    public CourseReviewThumbsup readCourseReviewThumbsupCount(Long id) {
+    public CourseReviewThumbsupCountView readCourseReviewThumbsupCount(Long id) {
 
         Long courseReviewThumbsupCnt = courseReviewThumbsupRepository.countByCourseReviewId(id);
 
-        return CourseReviewThumbsup.builder()
+        return CourseReviewThumbsupCountView.builder()
                 .courseReviewThumbsupCount(courseReviewThumbsupCnt)
                 .build();
     }
