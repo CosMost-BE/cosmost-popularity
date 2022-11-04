@@ -77,14 +77,15 @@ public class PopularityController {
         // 코스의 좋아요 개수 조회
         if (String.valueOf(filter).equals("count") && type.equals("cosmost")) {
             return ResponseEntity.ok().body(courseThumbsupService.readCourseThumbsupCount(id));
-            // 내가 누른 해당 코스 좋아요
-        } else if (type.equals("cosmost")) {
-            return ResponseEntity.ok().body(courseThumbsupService.readCourseThumbsupByMe(id));
-            // 내가 누른 해당 코스리뷰 좋아요
-        } else if (type.equals("review")) {
-            return ResponseEntity.ok().body(courseReviewThumbsupService.readCourseReviewThumbsupByMe(id));
+
         } else if(String.valueOf(filter).equals("count") && type.equals("review")){
             return ResponseEntity.ok().body(courseReviewThumbsupService.readCourseReviewThumbsupCount(id));
+        // 내가 누른 해당 코스 좋아요
+        } else if (type.equals("cosmost")) {
+            return ResponseEntity.ok().body(courseThumbsupService.readCourseThumbsupByMe(id));
+        // 내가 누른 해당 코스리뷰 좋아요
+        } else if (type.equals("review")) {
+            return ResponseEntity.ok().body(courseReviewThumbsupService.readCourseReviewThumbsupByMe(id));
         }
         return null;
     }
