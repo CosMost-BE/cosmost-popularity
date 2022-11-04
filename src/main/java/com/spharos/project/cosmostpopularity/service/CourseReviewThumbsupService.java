@@ -3,6 +3,7 @@ package com.spharos.project.cosmostpopularity.service;
 
 import com.spharos.project.cosmostpopularity.model.CourseReviewThumbsup;
 import com.spharos.project.cosmostpopularity.requestbody.CreatePopularitiesRequest;
+import com.spharos.project.cosmostpopularity.view.CourseReviewThumbsupCountView;
 import com.spharos.project.cosmostpopularity.view.CourseReviewThumbsupView;
 
 import java.util.List;
@@ -13,5 +14,5 @@ public interface CourseReviewThumbsupService {
     void deleteCourseReviewThumbsup(Long id);
     List<CourseReviewThumbsupView> readCourseReviewThumbsupByMe(Long id);
 
-    CourseReviewThumbsup readCourseReviewThumbsupCount(Long id);
+    CourseReviewThumbsupCountView readCourseReviewThumbsupCount(Long id);
 }

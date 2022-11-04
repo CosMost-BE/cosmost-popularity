@@ -3,6 +3,7 @@ package com.spharos.project.cosmostpopularity.infrastructure.repository;
 import com.spharos.project.cosmostpopularity.infrastructure.entity.CourseThumbsupEntity;
 import com.spharos.project.cosmostpopularity.view.CourseThumbsupCountView;
 import com.spharos.project.cosmostpopularity.view.CourseThumbsupView;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,6 +17,7 @@ public interface CourseThumbsupRepository extends JpaRepository<CourseThumbsupEn
 
     List<CourseThumbsupEntity> findByAuthIdAndCourseId(Long authId, Long courseId);
     Long countByCourseId(Long id);
+    Slice<CourseThumbsupEntity> findAllByAuthId(Long id, Pageable pageable);
     List<CourseThumbsupEntity> findAllByAuthId(Long id);
 
     @Query(value = "select c from CourseThumbsupEntity c " +
@@ -25,4 +27,5 @@ public interface CourseThumbsupRepository extends JpaRepository<CourseThumbsupEn
     @Query(value = "select count(c.courseId) from CourseThumbsupEntity c " +
             "group by c.courseId order by count(c.courseId) desc")
     List<Float> CourseThumbsupCount(Pageable pageable);
+    
 }

@@ -16,7 +16,7 @@ public class CourseThumbsup {
     private Long id;
     private Long authId;
     private Long courseId;
-
+    private Long courseThumbsCnt;
 
     public CourseThumbsup(CourseThumbsupEntity entity) {
         this.authId = entity.getAuthId();
