@@ -7,15 +7,19 @@ import com.spharos.project.cosmostpopularity.infrastructure.entity.FollowEntity;
 import com.spharos.project.cosmostpopularity.infrastructure.repository.FollowEntityRepository;
 import com.spharos.project.cosmostpopularity.model.Follow;
 import com.spharos.project.cosmostpopularity.requestbody.CreatePopularitiesRequest;
+import com.spharos.project.cosmostpopularity.responsebody.ReadFollowEntityResponse;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -82,51 +86,91 @@ public class FollowServiceImpl implements FollowService {
 
     // 나의 팔로워 조회하기 followingId(주인)
     @Override
-    public List<Follow> readMyFollowers() {
+    public List<ReadFollowEntityResponse> readMyFollowers(Pageable pageable) {
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
         String token = request.getHeader("Authorization");
         Long followingId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
 
-        List<FollowEntity> followEntityList = followEntityRepository.findAllByFollowingId(followingId);
+        Slice<FollowEntity> followEntityList = followEntityRepository.findAllByFollowingId(followingId, pageable);
 
         if (!followEntityList.isEmpty()) {
-            return followEntityList.stream().map(followEntity ->
-                    new Follow(followEntity)).collect(Collectors.toList());
+            List<ReadFollowEntityResponse> readFollowEntityResponseList = new ArrayList<>();
+
+            followEntityList.forEach(followEntity -> {
+                readFollowEntityResponseList.add(ReadFollowEntityResponse.builder()
+                        .id(followEntity.getId())
+                        .authId(followEntity.getAuthId())
+                        .followingId(followEntity.getFollowingId())
+                        .whetherLastPage(followEntityList.isLast())
+                        .build());
+            });
+
+            return readFollowEntityResponseList;
         }
         throw new AuthIdNotFoundException();
     }
 
     // 나의 팔로잉 조회하기 (authId가 주인)
     @Override
-    public List<Follow> readMyFollowings() {
+    public List<ReadFollowEntityResponse> readMyFollowings(Pageable pageable) {
 
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
         String token = request.getHeader("Authorization");
         Long authId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
 
-        List<FollowEntity> followEntityList = followEntityRepository.findAllByAuthId(authId);
+        Slice<FollowEntity> followEntityList = followEntityRepository.findAllByAuthId(authId, pageable);
 
         if (!followEntityList.isEmpty()) {
-            return followEntityList.stream().map(followEntity ->
-                    new Follow(followEntity)).collect(Collectors.toList());
+
+            List<ReadFollowEntityResponse> readFollowEntityResponseList = new ArrayList<>();
+
+            followEntityList.forEach(followEntity -> {
+                readFollowEntityResponseList.add(ReadFollowEntityResponse.builder()
+                        .id(followEntity.getId())
+                        .authId(followEntity.getAuthId())
+                        .followingId(followEntity.getFollowingId())
+                        .whetherLastPage(followEntityList.isLast())
+                        .build());
+            });
+
+            return readFollowEntityResponseList;
+
+
+//            return followEntityList.stream().map(followEntity ->
+//                    new Follow(followEntity)).collect(Collectors.toList());
         }
         throw new FollowingIdNotFoundException();
     }
 
     @Override
-    public List<Follow> readOtherUserFollowers() {
+    public List<ReadFollowEntityResponse> readOtherUserFollowers(Pageable pageable) {
 
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
         Long following = Long.valueOf(request.getHeader("Authorization"));
 
-        List<FollowEntity> followingId = followEntityRepository.findAllByFollowingId(following);
+        Slice<FollowEntity> followingId = followEntityRepository.findAllByFollowingId(following, pageable);
 
         if (!followingId.isEmpty()) {
-            return followingId.stream().map(followEntity ->
-                    new Follow(followEntity)).collect(Collectors.toList());
+
+            List<ReadFollowEntityResponse> readFollowEntityResponseList = new ArrayList<>();
+
+            followingId.forEach(followEntity -> {
+                readFollowEntityResponseList.add(ReadFollowEntityResponse.builder()
+                        .id(followEntity.getId())
+                        .authId(followEntity.getAuthId())
+                        .followingId(followEntity.getFollowingId())
+                        .whetherLastPage(followingId.isLast())
+                        .build());
+            });
+
+            return readFollowEntityResponseList;
+
+
+//            return followingId.stream().map(followEntity ->
+//                    new Follow(followEntity)).collect(Collectors.toList());
         }
         throw new AuthIdNotFoundException();
 
