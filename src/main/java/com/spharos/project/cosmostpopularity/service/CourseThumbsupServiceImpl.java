@@ -5,12 +5,15 @@ import com.spharos.project.cosmostpopularity.exception.DuplicateCourseThumbsup;
 import com.spharos.project.cosmostpopularity.infrastructure.entity.CourseThumbsupEntity;
 import com.spharos.project.cosmostpopularity.infrastructure.repository.CourseThumbsupRepository;
 import com.spharos.project.cosmostpopularity.requestbody.CreatePopularitiesRequest;
+import com.spharos.project.cosmostpopularity.responsebody.ReadAllThumbsupByMeResponse;
 import com.spharos.project.cosmostpopularity.view.CourseThumbsupCountView;
 import com.spharos.project.cosmostpopularity.view.CourseThumbsupView;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -107,23 +110,24 @@ public class CourseThumbsupServiceImpl implements CourseThumbsupService {
 
     // 내가 누른 코스 좋아요 전체조회(마이페이지)
     @Override
-    public List<CourseThumbsupView> readAllThumbsupByMe() {
+    public List<ReadAllThumbsupByMeResponse> readAllThumbsupByMe(Pageable pageable) {
 
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
         String token = request.getHeader("Authorization");
         Long authId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
 
-        List<CourseThumbsupEntity> courseThumbsupEntityList = courseThumbsupRepository.findAllByAuthId(authId);
-        List<CourseThumbsupView> courseThumbsupViews = new ArrayList<>();
+        Slice<CourseThumbsupEntity> courseThumbsupEntityList = courseThumbsupRepository.findAllByAuthId(authId, pageable);
+        List<ReadAllThumbsupByMeResponse> readAllThumbsupByMeResponseList = new ArrayList<>();
 
         for (CourseThumbsupEntity courseThumbsupEntity : courseThumbsupEntityList) {
-            courseThumbsupViews.add(CourseThumbsupView.builder()
-                    .authId(courseThumbsupEntity.getAuthId())
+            readAllThumbsupByMeResponseList.add(ReadAllThumbsupByMeResponse.builder()
+                    .id(courseThumbsupEntity.getId())
                     .courseId(courseThumbsupEntity.getCourseId())
+                    .whetherLastPage(courseThumbsupEntityList.isLast())
                     .build());
         }
 
-        return courseThumbsupViews;
+        return readAllThumbsupByMeResponseList;
     }
 }
