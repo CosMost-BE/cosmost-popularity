@@ -1,13 +1,16 @@
 package com.spharos.project.cosmostpopularity.service;
 
 import com.spharos.project.cosmostpopularity.exception.AuthIdNotFoundException;
+import com.spharos.project.cosmostpopularity.exception.DuplicateCourseThumbsup;
 import com.spharos.project.cosmostpopularity.exception.FollowIdNotFoundException;
 import com.spharos.project.cosmostpopularity.exception.FollowingIdNotFoundException;
+import com.spharos.project.cosmostpopularity.infrastructure.entity.CourseThumbsupEntity;
 import com.spharos.project.cosmostpopularity.infrastructure.entity.FollowEntity;
 import com.spharos.project.cosmostpopularity.infrastructure.repository.FollowEntityRepository;
 import com.spharos.project.cosmostpopularity.model.Follow;
 import com.spharos.project.cosmostpopularity.requestbody.CreatePopularitiesRequest;
 import com.spharos.project.cosmostpopularity.responsebody.ReadFollowEntityResponse;
+import com.spharos.project.cosmostpopularity.view.CourseThumbsupView;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,10 +139,6 @@ public class FollowServiceImpl implements FollowService {
             });
 
             return readFollowEntityResponseList;
-
-
-//            return followEntityList.stream().map(followEntity ->
-//                    new Follow(followEntity)).collect(Collectors.toList());
         }
         throw new FollowingIdNotFoundException();
     }
@@ -168,11 +167,24 @@ public class FollowServiceImpl implements FollowService {
 
             return readFollowEntityResponseList;
 
-
-//            return followingId.stream().map(followEntity ->
-//                    new Follow(followEntity)).collect(Collectors.toList());
         }
         throw new AuthIdNotFoundException();
 
+    }
+
+
+    @Override
+    public List<Follow> readMyFollowerByMe(Long id) {
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
+        String token = request.getHeader("Authorization");
+        Long authId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
+
+        Optional<List<FollowEntity>> followEntityList =
+                Optional.of(Optional.ofNullable(followEntityRepository.findByAuthIdAndFollowingId(authId, id))
+                        .orElseThrow(FollowingIdNotFoundException::new));
+
+        return followEntityList.get().stream().map(follow ->
+                new Follow(follow)).collect(Collectors.toList());
     }
 }

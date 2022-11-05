@@ -88,6 +88,8 @@ public class PopularityController {
         // 내가 누른 해당 코스리뷰 좋아요
         } else if (type.equals("review")) {
             return ResponseEntity.ok().body(courseReviewThumbsupService.readCourseReviewThumbsupByMe(id));
+        } else if (type.equals("follow")) {
+            return ResponseEntity.ok().body(followService.readMyFollowerByMe(id));
         }
         return null;
     }

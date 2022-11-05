@@ -15,4 +15,6 @@ public interface FollowService {
     List<ReadFollowEntityResponse> readMyFollowers(Pageable pageable);
     List<ReadFollowEntityResponse> readMyFollowings(Pageable pageable);
     List<ReadFollowEntityResponse> readOtherUserFollowers(Pageable pageable);
+
+    List<Follow> readMyFollowerByMe(Long id);
 }
