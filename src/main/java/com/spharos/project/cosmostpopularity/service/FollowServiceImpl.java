@@ -1,16 +1,14 @@
 package com.spharos.project.cosmostpopularity.service;
 
 import com.spharos.project.cosmostpopularity.exception.AuthIdNotFoundException;
-import com.spharos.project.cosmostpopularity.exception.DuplicateCourseThumbsup;
 import com.spharos.project.cosmostpopularity.exception.FollowIdNotFoundException;
 import com.spharos.project.cosmostpopularity.exception.FollowingIdNotFoundException;
-import com.spharos.project.cosmostpopularity.infrastructure.entity.CourseThumbsupEntity;
 import com.spharos.project.cosmostpopularity.infrastructure.entity.FollowEntity;
 import com.spharos.project.cosmostpopularity.infrastructure.repository.FollowEntityRepository;
 import com.spharos.project.cosmostpopularity.model.Follow;
 import com.spharos.project.cosmostpopularity.requestbody.CreatePopularitiesRequest;
 import com.spharos.project.cosmostpopularity.responsebody.ReadFollowEntityResponse;
-import com.spharos.project.cosmostpopularity.view.CourseThumbsupView;
+import com.spharos.project.cosmostpopularity.responsebody.ReadOtherUserFollowersCntResponse;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,7 +142,7 @@ public class FollowServiceImpl implements FollowService {
     }
 
     @Override
-    public List<ReadFollowEntityResponse> readOtherUserFollowers(Pageable pageable) {
+    public List<ReadOtherUserFollowersCntResponse> readOtherUserFollowers(Pageable pageable) {
 
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
@@ -152,9 +150,12 @@ public class FollowServiceImpl implements FollowService {
 
         Slice<FollowEntity> followingId = followEntityRepository.findAllByFollowingId(following, pageable);
 
+
         if (!followingId.isEmpty()) {
 
             List<ReadFollowEntityResponse> readFollowEntityResponseList = new ArrayList<>();
+            List<ReadOtherUserFollowersCntResponse> readOtherUserFollowersCntResponseList = new ArrayList<>();
+            List<FollowEntity> followingCnt = followEntityRepository.findByFollowingId(following);
 
             followingId.forEach(followEntity -> {
                 readFollowEntityResponseList.add(ReadFollowEntityResponse.builder()
@@ -165,7 +166,14 @@ public class FollowServiceImpl implements FollowService {
                         .build());
             });
 
-            return readFollowEntityResponseList;
+            readOtherUserFollowersCntResponseList.add(
+                    ReadOtherUserFollowersCntResponse.builder()
+                            .otherUserFollowerCnt((long) followingCnt.size())
+                            .readFollowEntityResponseList(readFollowEntityResponseList)
+                            .build());
+
+
+            return readOtherUserFollowersCntResponseList;
 
         }
         throw new AuthIdNotFoundException();
