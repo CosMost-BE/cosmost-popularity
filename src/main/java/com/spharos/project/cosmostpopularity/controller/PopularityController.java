@@ -54,7 +54,6 @@ public class PopularityController {
     @GetMapping("")
     public ResponseEntity<?> readMyFollowers(@RequestParam(value = "filter", defaultValue = " ", required = false) String filter,
                                              @RequestParam(value = "type", defaultValue = " ", required = false) String type,
-                                             @RequestParam(value = "course-id", defaultValue = " ", required = false) Long courseId,
                                              Pageable pageable
     ) {
 
@@ -64,7 +63,7 @@ public class PopularityController {
             return ResponseEntity.ok().body(followService.readMyFollowings(pageable));
         } else if (String.valueOf(type).equals("cosmost")) {
             return ResponseEntity.ok().body(courseThumbsupService.readAllThumbsupByMe(pageable));
-        } else if (filter.equals("cosmosts") && type.equals("follower") && !(courseId.equals(" "))){
+        } else if (filter.equals("cosmosts") && type.equals("follower")){
             return ResponseEntity.ok().body(followService.readOtherUserFollowers(pageable));
         }
             return null;
