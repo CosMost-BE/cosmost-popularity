@@ -8,6 +8,8 @@ import com.spharos.project.cosmostpopularity.infrastructure.repository.FollowEnt
 import com.spharos.project.cosmostpopularity.model.Follow;
 import com.spharos.project.cosmostpopularity.requestbody.CreatePopularitiesRequest;
 import com.spharos.project.cosmostpopularity.responsebody.ReadFollowEntityResponse;
+import com.spharos.project.cosmostpopularity.responsebody.ReadMyFollowersCntResponse;
+import com.spharos.project.cosmostpopularity.responsebody.ReadMyFollowingsCntResponse;
 import com.spharos.project.cosmostpopularity.responsebody.ReadOtherUserFollowersCntResponse;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
@@ -87,7 +89,7 @@ public class FollowServiceImpl implements FollowService {
 
     // 나의 팔로워 조회하기 followingId(주인)
     @Override
-    public List<ReadFollowEntityResponse> readMyFollowers(Pageable pageable) {
+    public List<ReadMyFollowersCntResponse> readMyFollowers(Pageable pageable) {
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
         String token = request.getHeader("Authorization");
@@ -95,8 +97,11 @@ public class FollowServiceImpl implements FollowService {
 
         Slice<FollowEntity> followEntityList = followEntityRepository.findAllByFollowingId(followingId, pageable);
 
+
         if (!followEntityList.isEmpty()) {
             List<ReadFollowEntityResponse> readFollowEntityResponseList = new ArrayList<>();
+            List<ReadMyFollowersCntResponse> readMyFollowersCntResponseList = new ArrayList<>();
+            List<FollowEntity> readMyfollowerCnt = followEntityRepository.findByFollowingId(followingId);
 
             followEntityList.forEach(followEntity -> {
                 readFollowEntityResponseList.add(ReadFollowEntityResponse.builder()
@@ -107,14 +112,20 @@ public class FollowServiceImpl implements FollowService {
                         .build());
             });
 
-            return readFollowEntityResponseList;
+            readMyFollowersCntResponseList.add(
+                    ReadMyFollowersCntResponse.builder()
+                            .readMyFollewerCnt((long) readMyfollowerCnt.size())
+                            .readFollowEntityResponseList(readFollowEntityResponseList)
+                            .build());
+
+            return readMyFollowersCntResponseList;
         }
         throw new AuthIdNotFoundException();
     }
 
     // 나의 팔로잉 조회하기 (authId가 주인)
     @Override
-    public List<ReadFollowEntityResponse> readMyFollowings(Pageable pageable) {
+    public List<ReadMyFollowingsCntResponse> readMyFollowings(Pageable pageable) {
 
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
@@ -126,6 +137,8 @@ public class FollowServiceImpl implements FollowService {
         if (!followEntityList.isEmpty()) {
 
             List<ReadFollowEntityResponse> readFollowEntityResponseList = new ArrayList<>();
+            List<ReadMyFollowingsCntResponse> readMyFollowingsCntResponseList = new ArrayList<>();
+            List<FollowEntity> readMyfollowingCnt = followEntityRepository.findByAuthId(authId);
 
             followEntityList.forEach(followEntity -> {
                 readFollowEntityResponseList.add(ReadFollowEntityResponse.builder()
@@ -136,7 +149,13 @@ public class FollowServiceImpl implements FollowService {
                         .build());
             });
 
-            return readFollowEntityResponseList;
+            readMyFollowingsCntResponseList.add(
+                    ReadMyFollowingsCntResponse.builder()
+                            .readMyFollowingCnt((long) readMyfollowingCnt.size())
+                            .readFollowingEntityResponseList(readFollowEntityResponseList)
+                            .build());
+
+            return readMyFollowingsCntResponseList;
         }
         throw new FollowingIdNotFoundException();
     }
