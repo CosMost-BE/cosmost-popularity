@@ -28,14 +28,14 @@ public class ViewCourseThumbsupServiceImpl implements ViewCourseThumbsupService 
     @Override
     public List<ReadCourseThumbsupSortAllResponse> readCourseThumbsupSortAll(Pageable pageable) {
 
-        Slice<CourseThumbsupEntity> courseThumbsupSlice = courseThumbsupRepository.CourseThumbsupSort(pageable);
-        List<Float> courseThumbsupCountList = courseThumbsupRepository.CourseThumbsupCount(pageable);
+        Slice<Long> courseThumbsupSlice = courseThumbsupRepository.CourseThumbsupSortId(pageable);
+        Slice<Long> courseThumbsupCountList = courseThumbsupRepository.CourseThumbsupCount(pageable);
         List<ReadCourseThumbsupSortAllResponse> courseThumbsupSortList = new ArrayList<>();
 
         for(int i=0; i<courseThumbsupSlice.getContent().size(); i++) {
             courseThumbsupSortList.add(ReadCourseThumbsupSortAllResponse.builder()
-                    .courseId(courseThumbsupSlice.getContent().get(i).getCourseId())
-                    .courseThumbsCnt(courseThumbsupCountList.get(i).longValue())
+                    .courseId(courseThumbsupSlice.getContent().get(i).longValue())
+                    .courseThumbsCnt(courseThumbsupCountList.getContent().get(i).longValue())
                     .whetherLastPage(courseThumbsupSlice.isLast())
                     .build());
         }
